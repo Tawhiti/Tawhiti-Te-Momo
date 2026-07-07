@@ -30,19 +30,22 @@ Netlify builds your site from a GitHub copy, and the editor saves back to it.
    **Deploy**. In ~1 minute your site is live at a free address like
    `random-name-123.netlify.app`.
 
-## Stage 3 — Turn on the online editor (~5 min)
+## Stage 3 — Turn on the online editor (Pages CMS, ~3 min)
 
-This makes `tawhitimedia.nz/admin` work from any browser with a login.
+Netlify retired its old Identity login, so we use **Pages CMS** instead — a free,
+hosted, no-code editor. Nothing to enable on Netlify.
 
-1. In your Netlify site: **Integrations** (or Site settings) → search
-   **Identity** → **Enable Identity**.
-2. Under Identity → **Registration**, set it to **Invite only** (so only you can
-   log in).
-3. Still under Identity → **Services → Git Gateway → Enable Git Gateway**.
-4. Identity → **Invite users** → enter `hello@tawhitimedia.nz`. Check your email
-   and click the link to set a password.
-5. Done — go to `your-site.netlify.app/admin/`, log in, and edit. Every "Publish"
-   updates the live site in about a minute.
+1. Go to **app.pagescms.org**.
+2. Click **Sign in with GitHub** → **Authorize**.
+3. When it asks which repositories Pages CMS may access, choose **Only select
+   repositories** → pick **Tawhiti-Te-Momo** → **Install & Authorize**.
+4. Back in Pages CMS, click your **Tawhiti-Te-Momo** project. It reads the
+   `.pages.yml` config and shows your content as editable forms.
+5. Edit anything — text, swap images/videos, reorder reels — then click **Save**.
+   Pages CMS commits to GitHub, Netlify rebuilds, and the live site updates in
+   about a minute.
+
+Bookmark app.pagescms.org — that's your editor from now on, from any browser.
 
 ---
 
@@ -62,8 +65,9 @@ This makes `tawhitimedia.nz/admin` work from any browser with a login.
 
 ## After it's live
 
-- **Editing:** `tawhitimedia.nz/admin/` — change text, swap images/videos, reorder
-  reels, all through forms. Click Publish; the site updates itself.
+- **Editing:** **app.pagescms.org** — sign in with GitHub, change text, swap
+  images/videos, reorder reels, all through forms. Click Save; the site updates
+  itself.
 - **Big videos:** the editor uploads them as-is (no compression). For large phone
   or camera exports, it's still best to have them compressed first so the site
   stays fast.

@@ -1,0 +1,110 @@
+# Pages CMS config — the online no-code editor for this site.
+# Edit at https://app.pagescms.org (sign in with GitHub, pick this repo).
+# It reads/writes site-content.json, which the site uses as its content.
+
+media:
+  input: public          # browse all existing images & videos
+  output: /              # ...referenced from the site root (e.g. /reels/clip.mp4)
+  extensions: [jpg, jpeg, png, webp, svg, gif, mp4, webm, mov]
+
+content:
+  - name: site
+    label: Site Content
+    type: file
+    path: site-content.json
+    fields:
+      - name: hero
+        label: Hero (top of home page)
+        type: object
+        fields:
+          - { name: line1, label: Name line 1, type: string }
+          - { name: line2, label: Name line 2, type: string }
+          - { name: media, label: Scrolling reel videos, type: file, list: true }
+
+      - name: work
+        label: Featured Work projects
+        type: object
+        list: true
+        fields:
+          - { name: id, label: "ID (do not change)", type: string }
+          - { name: name, label: Project name, type: string }
+          - { name: client, label: Client, type: string }
+          - { name: location, label: Location, type: string }
+          - { name: blurb, label: Description, type: text }
+          - { name: tags, label: Tags, type: string, list: true }
+          - { name: heroGrid, label: "Vertical video grid (like Live Sport)", type: boolean }
+          - name: media
+            label: Videos / images
+            type: object
+            list: true
+            fields:
+              - { name: src, label: File, type: file }
+              - { name: client, label: "Client caption (optional)", type: string, required: false }
+              - { name: location, label: "Location caption (optional)", type: string, required: false }
+
+      - name: about
+        label: About section
+        type: object
+        fields:
+          - { name: label, label: Section label, type: string }
+          - { name: paragraph, label: Paragraph, type: text }
+          - { name: stripCaption, label: "Caption under image (empty = hidden)", type: string, required: false }
+          - { name: stripMedia, label: Behind-the-scenes image(s), type: image, list: true }
+
+      - name: partners
+        label: Partners / client logos
+        type: object
+        fields:
+          - { name: label, label: Section label, type: string }
+          - { name: logos, label: Logos (white PNGs), type: image, list: true }
+
+      - name: services
+        label: Services
+        type: object
+        list: true
+        fields:
+          - { name: num, label: "Number (01, 02...)", type: string }
+          - { name: name, label: Service name, type: string }
+          - { name: desc, label: Description, type: text }
+          - { name: tags, label: Tags, type: string, list: true }
+          - { name: media, label: Image, type: image }
+          - name: tint
+            label: Card style
+            type: select
+            options:
+              values:
+                - { value: surface, label: Light card }
+                - { value: deep, label: Dark card }
+
+      - name: contact
+        label: Contact & footer
+        type: object
+        fields:
+          - { name: location, label: Location, type: string }
+          - { name: headline, label: Headline, type: string }
+          - { name: email, label: "Email (enquiries go here)", type: string }
+          - { name: instagram, label: Instagram URL, type: string }
+          - { name: website, label: "Website (footer text)", type: string }
+          - { name: projectTypes, label: "Project types (contact form dropdown)", type: string, list: true }
+
+      - name: theme
+        label: "Theme — colours, fonts & timing (advanced)"
+        type: object
+        fields:
+          - { name: bg, label: Background colour, type: string }
+          - { name: bgDeep, label: Background deep (dark cards), type: string }
+          - { name: text, label: Text colour, type: string }
+          - { name: accent, label: Accent (secondary text), type: string }
+          - { name: surface, label: Surface (light cards), type: string }
+          - { name: surfaceText, label: Surface text, type: string }
+          - { name: pillBg, label: Pill background, type: string }
+          - { name: pillText, label: Pill text, type: string }
+          - { name: fontDisplay, label: Display font stack, type: string }
+          - { name: fontBody, label: Body font stack, type: string }
+          - { name: radiusCard, label: Card corner radius, type: string }
+          - { name: radiusPill, label: Pill corner radius, type: string }
+          - { name: marqueeSeconds, label: "Marquee loop seconds (lower = faster)", type: number }
+          - { name: revealMs, label: Scroll reveal ms, type: number }
+          - { name: introFadeIn, label: Intro fade-in ms, type: number }
+          - { name: introHold, label: Intro hold ms, type: number }
+          - { name: introRise, label: Intro rise ms, type: number }
