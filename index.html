@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tawhiti Media — Videographer & Photographer, Wellington NZ</title>
+    <meta name="description" content="Tawhiti Te Momo — Wellington-based videographer, photographer and creative working across live sport, music and brands, across New Zealand." />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:title" content="Tawhiti Media — Videographer & Photographer" />
+    <meta property="og:description" content="Live sport, music & festivals, brand films and documentary storytelling across New Zealand." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/images/bts-festival.jpg" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+    <!-- Netlify Identity: after accepting an editor invite, redirect to /admin/ -->
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <script>
+      if (window.netlifyIdentity) {
+        window.netlifyIdentity.on("init", (user) => {
+          if (!user) {
+            window.netlifyIdentity.on("login", () => {
+              document.location.href = "/admin/";
+            });
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

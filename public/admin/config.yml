@@ -1,0 +1,131 @@
+# Decap CMS configuration — the form-based editor for site-content.json.
+# Local editing: run `npm run cms` + `npm run dev`, open http://localhost:5173/admin/
+# When the site is deployed to Netlify later, enable Identity + Git Gateway
+# and the same editor works online at tawhitimedia.nz/admin/
+
+backend:
+  name: git-gateway
+  branch: main
+
+# Lets the editor talk to the local decap-server instead of a git host:
+local_backend: true
+
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+collections:
+  - name: "site"
+    label: "Site Content"
+    files:
+      - name: "content"
+        label: "All site content"
+        file: "site-content.json"
+        fields:
+          - label: "Hero (top of home page)"
+            name: hero
+            widget: object
+            fields:
+              - { label: "Name line 1", name: line1, widget: string }
+              - { label: "Name line 2", name: line2, widget: string }
+              - label: "Scrolling reel videos"
+                name: media
+                widget: list
+                field: { label: Video, name: video, widget: file }
+
+          - label: "Featured Work projects"
+            name: work
+            widget: list
+            fields:
+              - { label: "ID (do not change)", name: id, widget: string }
+              - { label: "Project name", name: name, widget: string }
+              - { label: "Client", name: client, widget: string }
+              - { label: "Location", name: location, widget: string }
+              - { label: "Description", name: blurb, widget: text }
+              - label: "Tags"
+                name: tags
+                widget: list
+                field: { label: Tag, name: tag, widget: string }
+              - { label: "Vertical video grid (2 rows of 3, like Live Sport)", name: heroGrid, widget: boolean, required: false }
+              - label: "Videos / images"
+                name: media
+                widget: list
+                fields:
+                  - { label: "File", name: src, widget: file }
+                  - { label: "Client caption (optional)", name: client, widget: string, required: false }
+                  - { label: "Location caption (optional)", name: location, widget: string, required: false }
+
+          - label: "About section"
+            name: about
+            widget: object
+            fields:
+              - { label: "Section label", name: label, widget: string }
+              - { label: "Paragraph", name: paragraph, widget: text }
+              - { label: "Caption under image (empty = hidden)", name: stripCaption, widget: string, required: false }
+              - label: "Behind-the-scenes image(s)"
+                name: stripMedia
+                widget: list
+                field: { label: Image, name: image, widget: image }
+
+          - label: "Partners / client logos"
+            name: partners
+            widget: object
+            fields:
+              - { label: "Section label", name: label, widget: string }
+              - label: "Logos (6 white PNGs)"
+                name: logos
+                widget: list
+                field: { label: Logo, name: logo, widget: image }
+
+          - label: "Services"
+            name: services
+            widget: list
+            fields:
+              - { label: "Number (01, 02…)", name: num, widget: string }
+              - { label: "Service name", name: name, widget: string }
+              - { label: "Description", name: desc, widget: text }
+              - label: "Tags"
+                name: tags
+                widget: list
+                field: { label: Tag, name: tag, widget: string }
+              - { label: "Image", name: media, widget: image }
+              - label: "Card style"
+                name: tint
+                widget: select
+                options: [{ label: "Light card", value: "surface" }, { label: "Dark card", value: "deep" }]
+
+          - label: "Contact & footer"
+            name: contact
+            widget: object
+            fields:
+              - { label: "Location", name: location, widget: string }
+              - { label: "Headline", name: headline, widget: string }
+              - { label: "Email (enquiries go here)", name: email, widget: string }
+              - { label: "Instagram URL", name: instagram, widget: string }
+              - { label: "Website (footer text)", name: website, widget: string }
+              - label: "Project types (contact form dropdown)"
+                name: projectTypes
+                widget: list
+                field: { label: Type, name: type, widget: string }
+
+          - label: "Theme (colours, fonts & timing — advanced)"
+            name: theme
+            widget: object
+            collapsed: true
+            fields:
+              - { label: "Background", name: bg, widget: color }
+              - { label: "Background deep (dark cards)", name: bgDeep, widget: color }
+              - { label: "Text", name: text, widget: color }
+              - { label: "Accent (secondary text)", name: accent, widget: color }
+              - { label: "Surface (light cards)", name: surface, widget: color }
+              - { label: "Surface text", name: surfaceText, widget: color }
+              - { label: "Pill background", name: pillBg, widget: color }
+              - { label: "Pill text", name: pillText, widget: color }
+              - { label: "Display font stack", name: fontDisplay, widget: string }
+              - { label: "Body font stack", name: fontBody, widget: string }
+              - { label: "Card corner radius", name: radiusCard, widget: string }
+              - { label: "Pill corner radius", name: radiusPill, widget: string }
+              - { label: "Marquee loop seconds (lower = faster)", name: marqueeSeconds, widget: number }
+              - { label: "Scroll reveal ms", name: revealMs, widget: number }
+              - { label: "Intro fade-in ms", name: introFadeIn, widget: number }
+              - { label: "Intro hold ms", name: introHold, widget: number }
+              - { label: "Intro rise ms", name: introRise, widget: number }

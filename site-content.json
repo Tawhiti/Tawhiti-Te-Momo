@@ -1,0 +1,134 @@
+{
+  "theme": {
+    "bg": "#1A1A1A",
+    "bgDeep": "#101010",
+    "text": "#F5F3EF",
+    "accent": "#B5B1A8",
+    "surface": "#F5F3EF",
+    "surfaceText": "#1A1A1A",
+    "pillBg": "#1A1A1A",
+    "pillText": "#F5F3EF",
+    "fontDisplay": "'Helvetica Black', 'Archivo Black', sans-serif",
+    "fontBody": "'Archivo', sans-serif",
+    "radiusCard": "28px",
+    "radiusPill": "999px",
+    "marqueeSeconds": 32,
+    "revealMs": 700,
+    "introFadeIn": 700,
+    "introHold": 500,
+    "introRise": 1100
+  },
+  "hero": {
+    "line1": "TAWHITI",
+    "line2": "TE MOMO",
+    "media": [
+      "/reels/nzc-day-2-reel.mp4",
+      "/reels/hightide-edit.mp4",
+      "/reels/nzc-day-5-reel.mp4",
+      "/reels/sequence-01.mp4",
+      "/reels/sequence-09.mp4",
+      "/reels/snz-day-3.mp4",
+      "/reels/reel-7.mp4"
+    ]
+  },
+  "work": [
+    {
+      "id": "project-1",
+      "name": "Live Sport",
+      "client": "Swimming New Zealand",
+      "location": "New Zealand",
+      "blurb": "Live sport coverage: Fast action, key moments, and behind the scenes footage ready for broadcast, sponsors, or your own highlight reel.",
+      "tags": ["Live Sport", "Highlights"],
+      "heroGrid": true,
+      "media": [
+        { "src": "/reels/nzc-day-5-reel.mp4" },
+        { "src": "/reels/snz-day-3.mp4" },
+        { "src": "/reels/nzc-day-2-reel.mp4" },
+        { "src": "/reels/sequence-09.mp4" },
+        { "src": "/reels/nzc-day-1-reel.mp4" },
+        { "src": "/reels/snz-day-3-alt.mp4" }
+      ]
+    },
+    {
+      "id": "project-2",
+      "name": "Music & Festivals",
+      "client": "Audiology - Hightide",
+      "location": "Wellington - NZ",
+      "blurb": "Festival and concert coverage: capturing crowd energy and performance moments. You get content ready for social media and recap edits.",
+      "tags": ["Festivals", "Concerts", "Aftermovie"],
+      "heroGrid": false,
+      "media": [
+        { "src": "/reels/hightide-edit.mp4" },
+        { "src": "/reels/reel-7.mp4", "client": "Trademark Live - Maoli Aotearoa Tour", "location": "Wellington - New Zealand" }
+      ]
+    },
+    {
+      "id": "project-4",
+      "name": "Brand Films",
+      "client": "Rinse",
+      "location": "Auckland - New Zealand",
+      "blurb": "Commercial and brand storytelling built for campaigns, web and social.",
+      "tags": ["Commercial", "Brand", "Campaign"],
+      "heroGrid": false,
+      "media": [
+        { "src": "/reels/rinse-ad.mp4" }
+      ]
+    },
+    {
+      "id": "project-5",
+      "name": "Documentary",
+      "client": "Swimming New Zealand",
+      "location": "Hawkes Bay - New Zealand",
+      "blurb": "Documentary storytelling: interviews, verité moments and the details in between. Built to capture the feeling behind the story, not just the footage.",
+      "tags": ["Documentary", "Interviews", "Editorial"],
+      "heroGrid": false,
+      "media": [
+        { "src": "/reels/documentary-sequence-05.mp4" },
+        { "src": "/reels/tde-ep2-the-team.mp4", "client": "Swimming New Zealand", "location": "Auckland - New Zealand" }
+      ]
+    }
+  ],
+  "about": {
+    "label": "About Me...",
+    "paragraph": "I'm a Wellington based videographer, photographer and creative working across live sport, music and brands, across New Zealand.",
+    "stripCaption": "",
+    "stripMedia": ["/images/bts-festival.jpg"]
+  },
+  "partners": {
+    "label": "Proudly partnered with",
+    "logos": [
+      "/images/logos/audiology.png",
+      "/images/logos/swimming-nz.png",
+      "/images/logos/arena.png",
+      "/images/logos/jim-beam-homegrown.png",
+      "/images/logos/trademark.png",
+      "/images/logos/rinse.png"
+    ]
+  },
+  "services": [
+    {
+      "num": "01",
+      "name": "Videography",
+      "desc": "Live sport, events, festivals and concerts. Run-and-gun coverage built for broadcast and social.",
+      "tags": ["Live Sport", "Events", "Festivals", "Concerts", "Interviews"],
+      "media": "/images/videography-live.jpg",
+      "tint": "surface"
+    },
+    {
+      "num": "02",
+      "name": "Photography",
+      "desc": "Brand, event and lifestyle photography with a documentary eye. High-quality stills built for campaigns and socials.",
+      "tags": ["Brand", "Events", "Lifestyle", "Editorial", "Product"],
+      "media": "/images/photography-hikoi.jpg",
+      "tint": "deep"
+    }
+  ],
+  "contact": {
+    "location": "Wellington, NZ",
+    "headline": "Let's work together!",
+    "email": "hello@tawhitimedia.nz",
+    "instagram": "https://www.instagram.com/tawhiti.temomo/",
+    "website": "tawhitimedia.nz",
+    "projectTypes": ["Videography", "Photography", "Other"]
+  }
+}
