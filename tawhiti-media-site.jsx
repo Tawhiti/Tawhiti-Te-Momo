@@ -38,6 +38,7 @@ const css = `
   --radius-card:${T.radiusCard}; --radius-pill:${T.radiusPill};
 }
 *{margin:0;padding:0;box-sizing:border-box}
+img,video{max-width:100%}
 html{scroll-behavior:smooth;scrollbar-width:none}
 html::-webkit-scrollbar,body::-webkit-scrollbar{display:none}
 body{background:var(--bg)}
@@ -54,13 +55,13 @@ body{background:var(--bg)}
 .rv.in{opacity:1;transform:none}
 @media (prefers-reduced-motion: reduce){
   .rv{opacity:1;transform:none;transition:none}
-  .marquee-track{animation:none !important}
 }
 
 /* ---------- hero + intro animation ---------- */
 .hero{padding-top:clamp(28px,6vh,72px)}
-.hero-name{font-family:var(--font-display);text-transform:uppercase;line-height:.9;letter-spacing:.01em;text-align:center;position:relative;z-index:20;
+.hero-name{font-family:var(--font-display);text-transform:uppercase;line-height:.9;letter-spacing:.01em;text-align:center;position:relative;z-index:20;will-change:transform,opacity;
   transition:transform ${T.introRise}ms cubic-bezier(.72,0,.18,1),opacity ${T.introFadeIn}ms ease}
+.hero-pop{will-change:transform}
 /* nowrap keeps each line whole — the name is always exactly 2 lines */
 .hero-name span{display:block;font-size:clamp(54px,16.8vw,220px);letter-spacing:-.01em;white-space:nowrap}
 /* intro phases: name pops in (springy scale), holds centred on screen at
@@ -78,13 +79,12 @@ body{background:var(--bg)}
 .page-rest{opacity:0;transform:translateY(36px);transition:opacity .8s ease .1s,transform .9s cubic-bezier(.22,.9,.3,1) .1s}
 .page-rest.show{opacity:1;transform:none}
 
-/* ---------- marquee strip ---------- */
-.marquee{overflow:hidden;padding:clamp(26px,5vh,54px) 0 clamp(40px,7vh,80px)}
+/* ---------- marquee strip (auto-scrolls, and swipeable by hand) ---------- */
+.marquee{overflow-x:auto;overflow-y:hidden;padding:clamp(26px,5vh,54px) 0 clamp(40px,7vh,80px);scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.marquee::-webkit-scrollbar{display:none}
 .marquee.m-out{opacity:0}
 .marquee.m-in{opacity:1;transition:opacity .8s ease .15s}
-.marquee-track{display:flex;gap:14px;width:max-content;animation:scroll ${T.marqueeSeconds}s linear infinite}
-.marquee:hover .marquee-track{animation-play-state:paused}
-@keyframes scroll{to{transform:translateX(-50%)}}
+.marquee-track{display:flex;gap:14px;width:max-content}
 .tile{width:clamp(225px,33vw,405px);aspect-ratio:3/4;border-radius:calc(var(--radius-card) - 8px);overflow:hidden;flex-shrink:0;position:relative}
 .tile img{width:100%;height:100%;object-fit:cover;display:block}
 
@@ -120,12 +120,12 @@ body{background:var(--bg)}
 .strip-cap{color:var(--accent);font-size:13px;max-width:52ch;padding-bottom:clamp(28px,5vh,56px)}
 
 /* ---------- partners ---------- */
-.partner-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:clamp(20px,4vh,40px) 0 clamp(40px,7vh,80px)}
+.partner-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;padding:clamp(20px,4vh,40px) 0 clamp(40px,7vh,80px)}
 .partner-cell{background:var(--bg-deep);border-radius:calc(var(--radius-card) - 10px);aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;padding:clamp(14px,3vw,30px)}
 /* logo files are pre-normalised to equal visual area on 16:9 canvases */
 .partner-cell img{width:100%;height:100%;object-fit:contain}
 .partner-ph{color:var(--accent);font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;opacity:.65}
-@media (max-width:640px){.partner-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){.partner-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 /* ---------- services ---------- */
 .svc{border-radius:var(--radius-card);padding:clamp(20px,3.5vw,44px);margin-bottom:18px}
@@ -134,7 +134,7 @@ body{background:var(--bg)}
 .svc-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px}
 .svc-name{font-family:var(--font-display);text-transform:uppercase;font-size:clamp(34px,6.5vw,72px);line-height:1}
 .svc-num{font-weight:700;font-size:15px}
-.svc-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,3vw,36px);align-items:start}
+.svc-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(16px,3vw,36px);align-items:start}
 .svc-media{aspect-ratio:4/3;border-radius:calc(var(--radius-card) - 10px);overflow:hidden;position:relative}
 .svc-desc{font-size:clamp(15px,1.9vw,19px);font-weight:500;line-height:1.5;margin-bottom:16px}
 .pills{display:flex;flex-wrap:wrap;gap:8px}
@@ -143,7 +143,7 @@ body{background:var(--bg)}
 @media (max-width:760px){.svc-grid{grid-template-columns:1fr}}
 
 /* ---------- contact ---------- */
-.contact{padding:clamp(40px,8vh,100px) 0 120px;text-align:center}
+.contact{padding-top:clamp(40px,8vh,100px);padding-bottom:120px;text-align:center}
 .contact-loc{display:flex;justify-content:space-between;font-size:14px;color:var(--accent);font-weight:600;padding-bottom:clamp(26px,5vh,60px)}
 .contact-h{font-family:var(--font-display);text-transform:uppercase;font-size:clamp(48px,11vw,140px);line-height:.95;margin-bottom:26px}
 .contact-email{color:var(--text);font-weight:700;font-size:clamp(16px,2.4vw,22px);text-decoration:underline;text-underline-offset:5px}
@@ -152,6 +152,8 @@ body{background:var(--bg)}
 .footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:60px;color:var(--accent);font-size:13px}
 .footer a{color:var(--text);text-decoration:none;font-weight:600}
 .footer a:hover{text-decoration:underline}
+.footer a.ig{display:inline-flex;align-items:center;line-height:0}
+.footer a.ig:hover{opacity:.75}
 
 /* ---------- floating pill ---------- */
 .fab{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:40;background:var(--surface);color:var(--surface-text);border:none;border-radius:var(--radius-pill);padding:14px 30px;font-weight:800;font-size:15px;font-family:var(--font-body);cursor:pointer;box-shadow:0 14px 34px rgba(0,0,0,.35);transition:transform .2s ease,opacity .5s ease}
@@ -182,16 +184,16 @@ video:fullscreen{object-fit:contain !important;background:#000}
 .case-name{font-family:var(--font-display);text-transform:uppercase;font-size:clamp(40px,9vw,116px);line-height:.95;text-align:center;padding:14px 0 24px}
 .case-main{aspect-ratio:16/9;border-radius:var(--radius-card);overflow:hidden;position:relative}
 /* hero grid variant: 2 rows of 3 vertical 9:16 tiles */
-.case-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.case-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
 .case-grid .vtile{aspect-ratio:9/16;border-radius:18px;overflow:hidden;position:relative}
-@media (max-width:640px){.case-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){.case-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* mobile: hero-grid becomes a snap-scrolling circular carousel */
 .case-carousel{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .case-carousel::-webkit-scrollbar{display:none}
 .case-carousel .ctile{flex:0 0 76%;aspect-ratio:9/16;border-radius:18px;overflow:hidden;position:relative;scroll-snap-align:center}
 .case-meta{display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;padding:26px 0;color:var(--accent);font-size:14px;font-weight:600}
 .case-blurb{font-size:clamp(17px,2.4vw,24px);font-weight:600;line-height:1.45;max-width:60ch;padding-bottom:22px}
-.case-gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;padding-bottom:40px}
+.case-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding-bottom:40px}
 .case-gallery .gitem:only-child{grid-column:1/-1}
 .case-gallery .gtile{aspect-ratio:4/3;border-radius:18px;overflow:hidden;position:relative}
 .case-gallery .gitem:only-child .gtile{aspect-ratio:16/9}
@@ -275,10 +277,16 @@ function useIntro() {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduced) { setPhase("done"); setPageIn(true); return; }
     const t = CONFIG.theme;
-    const t1 = setTimeout(() => setPhase("hold"), 90);
-    const t2 = setTimeout(() => setPhase("done"), 90 + t.introFadeIn + t.introHold);
-    const t3 = setTimeout(() => setPageIn(true), 90 + t.introFadeIn + t.introHold + t.introRise - 250);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+    let t1, t2, t3, cancelled = false;
+    const start = () => {
+      if (cancelled) return;
+      t1 = setTimeout(() => setPhase("hold"), 90);
+      t2 = setTimeout(() => setPhase("done"), 90 + t.introFadeIn + t.introHold);
+      t3 = setTimeout(() => setPageIn(true), 90 + t.introFadeIn + t.introHold + t.introRise - 250);
+    };
+    // wait (briefly) for the display font so the intro doesn't restyle mid-animation
+    Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 600))]).then(start);
+    return () => { cancelled = true; clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, []);
   return { phase, pageIn };
 }
@@ -321,6 +329,44 @@ function ScrollIndicator() {
 
 function Hero({ phase, pageIn }) {
   const tiles = [...CONFIG.hero.media, ...CONFIG.hero.media];
+  const marqueeRef = useRef(null);
+  /* JS-driven marquee: drifts automatically, but the strip is a real scroll
+     container so it can be swiped/scrolled by hand. Auto-drift pauses while
+     the visitor interacts and resumes shortly after. The tile list is
+     duplicated, so wrapping scroll position by one set-width is invisible. */
+  useEffect(() => {
+    const el = marqueeRef.current;
+    if (!el) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let raf, resumeT, paused = reduced, pos = null;
+    const step = () => {
+      const half = el.scrollWidth / 2;
+      if (half > 0) {
+        if (pos === null) pos = el.scrollLeft;
+        // adopt the position if the visitor scrolled the strip by hand
+        if (Math.abs(el.scrollLeft - pos) > 3) pos = el.scrollLeft;
+        if (!paused) pos += half / (CONFIG.theme.marqueeSeconds * 60);
+        if (pos >= half + 2) pos -= half;
+        else if (pos < 2) pos += half;
+        el.scrollLeft = pos;
+      }
+      raf = requestAnimationFrame(step);
+    };
+    const pause = () => { paused = true; clearTimeout(resumeT); };
+    const resumeSoon = () => {
+      clearTimeout(resumeT);
+      resumeT = setTimeout(() => { paused = reduced; }, 1600);
+    };
+    el.addEventListener("pointerdown", pause);
+    el.addEventListener("pointerup", resumeSoon);
+    el.addEventListener("touchstart", pause, { passive: true });
+    el.addEventListener("touchend", resumeSoon);
+    el.addEventListener("mouseenter", pause);
+    el.addEventListener("mouseleave", resumeSoon);
+    el.addEventListener("wheel", resumeSoon, { passive: true });
+    raf = requestAnimationFrame(step);
+    return () => { cancelAnimationFrame(raf); clearTimeout(resumeT); };
+  }, []);
   return (
     <section className="hero">
       <h1 className={`hero-name wrap i-${phase}`}>
@@ -329,7 +375,7 @@ function Hero({ phase, pageIn }) {
           <span>{CONFIG.hero.line2}</span>
         </div>
       </h1>
-      <div className={`marquee ${pageIn ? "m-in" : "m-out"}`} aria-hidden="true">
+      <div className={`marquee ${pageIn ? "m-in" : "m-out"}`} ref={marqueeRef}>
         <div className="marquee-track">
           {tiles.map((m, i) => (
             <div className="tile" key={i}>
@@ -504,7 +550,13 @@ function Contact({ openModal }) {
       </div>
       <div className="footer rv">
         <span>© {new Date().getFullYear()} Tawhiti Media — {c.website}</span>
-        <a href={c.instagram} target="_blank" rel="noreferrer">Instagram ↗</a>
+        <a className="ig" href={c.instagram} target="_blank" rel="noreferrer" aria-label="Instagram">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+            <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" />
+            <circle cx="12" cy="12" r="4.4" />
+            <circle cx="17.6" cy="6.4" r="1.3" fill="currentColor" stroke="none" />
+          </svg>
+        </a>
         <a href="#top">Back to top ↑</a>
       </div>
     </section>

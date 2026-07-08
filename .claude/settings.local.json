@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "PowerShell($L = \"$env:LOCALAPPDATA\\\\Microsoft\\\\WinGet\\\\Links\"; & \"$L\\\\ffmpeg.exe\" -i \"public\\\\images\\\\logos\\\\trademark.png\" -vf \"cropdetect=limit=24:round=2\" -f null - 2>&1 | Select-String \"crop=\" | Select-Object -Last 1)",
-      "PowerShell($env:Path = \"C:\\\\Program Files\\\\nodejs;$env:Path\"; $env:MODE = 'fs'; npx -y decap-server)"
+      "PowerShell($env:Path = \"C:\\\\Program Files\\\\nodejs;$env:Path\"; $env:MODE = 'fs'; npx -y decap-server)",
+      "PowerShell($r = Invoke-WebRequest -Uri \"https://tawhitimedia.nz\" -UseBasicParsing -TimeoutSec 30; Write-Output \"STATUS: $\\($r.StatusCode\\)\"; Write-Output \"--- head content ---\"; \\($r.Content -split \"`n\" | Select-String -Pattern \"viewport|icon|og:|description|title|script\" | Select-Object -First 12\\) -join \"`n\")"
     ]
   }
 }
