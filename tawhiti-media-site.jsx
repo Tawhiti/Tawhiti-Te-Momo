@@ -222,11 +222,14 @@ function Media({ src, label, alt, withAudio }) {
     );
   }
   if (src && /\.(mp4|webm|mov)(\?|$)/i.test(src)) {
+    // every video has a same-named .jpg poster frame beside it
+    const poster = src.replace(/\.(mp4|webm|mov)$/i, ".jpg");
     // withAudio: standard browser controls, no autoplay — playback is coordinated
-    // by CaseStudy so only one video plays (with sound) at a time
+    // by CaseStudy so only one video plays (with sound) at a time.
+    // preload="metadata": paused videos cost ~nothing until actually played.
     if (withAudio)
-      return <video src={src} muted loop playsInline controls controlsList="nodownload" disablePictureInPicture style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />;
-    return <video src={src} autoPlay muted loop playsInline controlsList="nodownload" disablePictureInPicture style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />;
+      return <video src={src} poster={poster} preload="metadata" muted loop playsInline controls controlsList="nodownload" disablePictureInPicture style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />;
+    return <video src={src} poster={poster} autoPlay muted loop playsInline controlsList="nodownload" disablePictureInPicture style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />;
   }
   if (src)
     return <img src={src} alt={alt || label} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover" }} />;
@@ -327,6 +330,40 @@ function ScrollIndicator() {
 
 /* ---------- sections ---------- */
 
+/* Marquee tile that shows its lightweight poster frame until the tile is
+   close to entering view, then swaps in the autoplaying video. Spreads the
+   homepage's video downloads out instead of fetching every reel up front. */
+function MarqueeTile({ src, label }) {
+  const ref = useRef(null);
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const root = el.closest(".marquee");
+    // synchronous check for tiles already in (or near) view at mount
+    const r = el.getBoundingClientRect();
+    const rb = root.getBoundingClientRect();
+    if (r.left < rb.right + 600 && r.right > rb.left - 600) { setReady(true); return; }
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => { if (e.isIntersecting) { setReady(true); io.disconnect(); } }),
+      { root, rootMargin: "0px 600px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  const s = src && typeof src === "object" ? src.src : src;
+  const poster = s ? s.replace(/\.(mp4|webm|mov)$/i, ".jpg") : null;
+  return (
+    <div className="tile" ref={ref}>
+      {ready || !s ? (
+        <Media src={src} label={label} />
+      ) : (
+        <img src={poster} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+      )}
+    </div>
+  );
+}
+
 function Hero({ phase, pageIn }) {
   const tiles = [...CONFIG.hero.media, ...CONFIG.hero.media];
   const marqueeRef = useRef(null);
@@ -378,9 +415,7 @@ function Hero({ phase, pageIn }) {
       <div className={`marquee ${pageIn ? "m-in" : "m-out"}`} ref={marqueeRef}>
         <div className="marquee-track">
           {tiles.map((m, i) => (
-            <div className="tile" key={i}>
-              <Media src={m} label={`Reel ${(i % CONFIG.hero.media.length) + 1}`} />
-            </div>
+            <MarqueeTile src={m} label={`Reel ${(i % CONFIG.hero.media.length) + 1}`} key={i} />
           ))}
         </div>
       </div>
