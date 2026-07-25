@@ -55,6 +55,7 @@ body{background:var(--bg)}
 .rv.in{opacity:1;transform:none}
 @media (prefers-reduced-motion: reduce){
   .rv{opacity:1;transform:none;transition:none}
+  .marquee-track{animation:none !important}
 }
 
 /* ---------- hero + intro animation ---------- */
@@ -79,12 +80,13 @@ body{background:var(--bg)}
 .page-rest{opacity:0;transform:translateY(36px);transition:opacity .8s ease .1s,transform .9s cubic-bezier(.22,.9,.3,1) .1s}
 .page-rest.show{opacity:1;transform:none}
 
-/* ---------- marquee strip (auto-scrolls, and swipeable by hand) ---------- */
-.marquee{overflow-x:auto;overflow-y:hidden;padding:clamp(26px,5vh,54px) 0 clamp(40px,7vh,80px);scrollbar-width:none;-webkit-overflow-scrolling:touch}
-.marquee::-webkit-scrollbar{display:none}
+/* ---------- marquee strip (smooth GPU auto-scroll) ---------- */
+.marquee{overflow:hidden;padding:clamp(26px,5vh,54px) 0 clamp(40px,7vh,80px)}
 .marquee.m-out{opacity:0}
 .marquee.m-in{opacity:1;transition:opacity .8s ease .15s}
-.marquee-track{display:flex;gap:14px;width:max-content}
+.marquee-track{display:flex;gap:14px;width:max-content;animation:scroll ${T.marqueeSeconds}s linear infinite;will-change:transform}
+.marquee:hover .marquee-track{animation-play-state:paused}
+@keyframes scroll{to{transform:translateX(-50%)}}
 .tile{width:clamp(225px,33vw,405px);aspect-ratio:3/4;border-radius:calc(var(--radius-card) - 8px);overflow:hidden;flex-shrink:0;position:relative}
 .tile img{width:100%;height:100%;object-fit:cover;display:block}
 
@@ -330,80 +332,8 @@ function ScrollIndicator() {
 
 /* ---------- sections ---------- */
 
-/* Marquee tile that shows its lightweight poster frame until the tile is
-   close to entering view, then swaps in the autoplaying video. Spreads the
-   homepage's video downloads out instead of fetching every reel up front. */
-function MarqueeTile({ src, label }) {
-  const ref = useRef(null);
-  const [ready, setReady] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const root = el.closest(".marquee");
-    // synchronous check for tiles already in (or near) view at mount
-    const r = el.getBoundingClientRect();
-    const rb = root.getBoundingClientRect();
-    if (r.left < rb.right + 600 && r.right > rb.left - 600) { setReady(true); return; }
-    const io = new IntersectionObserver(
-      (entries) => entries.forEach((e) => { if (e.isIntersecting) { setReady(true); io.disconnect(); } }),
-      { root, rootMargin: "0px 600px" }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-  const s = src && typeof src === "object" ? src.src : src;
-  const poster = s ? s.replace(/\.(mp4|webm|mov)$/i, ".jpg") : null;
-  return (
-    <div className="tile" ref={ref}>
-      {ready || !s ? (
-        <Media src={src} label={label} />
-      ) : (
-        <img src={poster} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-      )}
-    </div>
-  );
-}
-
 function Hero({ phase, pageIn }) {
   const tiles = [...CONFIG.hero.media, ...CONFIG.hero.media];
-  const marqueeRef = useRef(null);
-  /* JS-driven marquee: drifts automatically, but the strip is a real scroll
-     container so it can be swiped/scrolled by hand. Auto-drift pauses while
-     the visitor interacts and resumes shortly after. The tile list is
-     duplicated, so wrapping scroll position by one set-width is invisible. */
-  useEffect(() => {
-    const el = marqueeRef.current;
-    if (!el) return;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let raf, resumeT, paused = reduced, pos = null;
-    const step = () => {
-      const half = el.scrollWidth / 2;
-      if (half > 0) {
-        if (pos === null) pos = el.scrollLeft;
-        // adopt the position if the visitor scrolled the strip by hand
-        if (Math.abs(el.scrollLeft - pos) > 3) pos = el.scrollLeft;
-        if (!paused) pos += half / (CONFIG.theme.marqueeSeconds * 60);
-        if (pos >= half + 2) pos -= half;
-        else if (pos < 2) pos += half;
-        el.scrollLeft = pos;
-      }
-      raf = requestAnimationFrame(step);
-    };
-    const pause = () => { paused = true; clearTimeout(resumeT); };
-    const resumeSoon = () => {
-      clearTimeout(resumeT);
-      resumeT = setTimeout(() => { paused = reduced; }, 1600);
-    };
-    el.addEventListener("pointerdown", pause);
-    el.addEventListener("pointerup", resumeSoon);
-    el.addEventListener("touchstart", pause, { passive: true });
-    el.addEventListener("touchend", resumeSoon);
-    el.addEventListener("mouseenter", pause);
-    el.addEventListener("mouseleave", resumeSoon);
-    el.addEventListener("wheel", resumeSoon, { passive: true });
-    raf = requestAnimationFrame(step);
-    return () => { cancelAnimationFrame(raf); clearTimeout(resumeT); };
-  }, []);
   return (
     <section className="hero">
       <h1 className={`hero-name wrap i-${phase}`}>
@@ -412,10 +342,13 @@ function Hero({ phase, pageIn }) {
           <span>{CONFIG.hero.line2}</span>
         </div>
       </h1>
-      <div className={`marquee ${pageIn ? "m-in" : "m-out"}`} ref={marqueeRef}>
+      {/* smooth GPU CSS auto-scroll; light video files keep the weight down */}
+      <div className={`marquee ${pageIn ? "m-in" : "m-out"}`} aria-hidden="true">
         <div className="marquee-track">
           {tiles.map((m, i) => (
-            <MarqueeTile src={m} label={`Reel ${(i % CONFIG.hero.media.length) + 1}`} key={i} />
+            <div className="tile" key={i}>
+              <Media src={m} label={`Reel ${(i % CONFIG.hero.media.length) + 1}`} />
+            </div>
           ))}
         </div>
       </div>
