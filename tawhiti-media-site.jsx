@@ -107,7 +107,8 @@ body{background:var(--bg)}
 /* ---------- featured work list ---------- */
 .worklist{position:relative;padding-bottom:clamp(40px,7vh,90px)}
 .work-item{display:block;width:100%;background:none;border:none;color:var(--text);font-family:var(--font-display);text-transform:uppercase;font-size:clamp(34px,7.4vw,92px);line-height:1.06;text-align:center;cursor:pointer;transition:color .25s ease,letter-spacing .3s ease;letter-spacing:.01em;padding:2px 0}
-.work-item:hover,.work-item.active{color:var(--accent);letter-spacing:.03em}
+.work-item.active{color:var(--accent);letter-spacing:.03em}
+@media (hover:hover){.work-item:hover{color:var(--accent);letter-spacing:.03em}}
 .work-preview{position:fixed;z-index:5;width:min(300px,60vw);aspect-ratio:3/4;border-radius:18px;overflow:hidden;pointer-events:none;box-shadow:0 30px 60px rgba(0,0,0,.35);opacity:0;transform:scale(.92);transition:opacity .25s ease,transform .3s ease}
 .work-preview.show{opacity:1;transform:scale(1)}
 .work-preview-mobile{margin:14px auto 6px;position:static;width:min(320px,80vw);opacity:1;transform:none;pointer-events:auto;box-shadow:0 20px 40px rgba(0,0,0,.3);border-radius:18px;overflow:hidden;aspect-ratio:3/4}
@@ -207,7 +208,7 @@ video:fullscreen{object-fit:contain !important;background:#000}
 
 /* ---------- helpers ---------- */
 
-function Media({ src, label, alt, withAudio }) {
+function Media({ src, label, alt, withAudio, marquee }) {
   // media entries may be a plain path or an object { src, client, location }
   if (src && typeof src === "object") src = src.src;
   if (src && /instagram\.com\/(reel|p|tv)\//.test(src)) {
@@ -231,6 +232,10 @@ function Media({ src, label, alt, withAudio }) {
     // preload="metadata": paused videos cost ~nothing until actually played.
     if (withAudio)
       return <video src={src} poster={poster} preload="metadata" muted loop playsInline controls controlsList="nodownload" disablePictureInPicture style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />;
+    // marquee tiles: Hero drives play/pause (only visible reels play);
+    // preload="none" so off-screen reels don't download until scrolled into view
+    if (marquee)
+      return <video src={src} poster={poster} preload="none" muted loop playsInline style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />;
     return <video src={src} poster={poster} autoPlay muted loop playsInline controlsList="nodownload" disablePictureInPicture style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />;
   }
   if (src)
@@ -334,6 +339,29 @@ function ScrollIndicator() {
 
 function Hero({ phase, pageIn }) {
   const tiles = [...CONFIG.hero.media, ...CONFIG.hero.media];
+  const marqueeRef = useRef(null);
+  /* Only the reels currently visible in the strip play; off-screen tiles stay
+     paused (and preload="none", so they don't even download until seen). Keeps
+     concurrent decoding + bandwidth low so playback is smooth and instant —
+     the CSS animation that scrolls the strip is untouched. Checked on a light
+     interval rather than every frame to stay cheap. */
+  useEffect(() => {
+    const el = marqueeRef.current;
+    if (!el) return;
+    const check = () => {
+      const m = el.getBoundingClientRect();
+      const onScreen = m.bottom > 0 && m.top < window.innerHeight;
+      el.querySelectorAll("video").forEach((v) => {
+        const r = v.getBoundingClientRect();
+        const visible = onScreen && r.right > m.left && r.left < m.right;
+        if (visible) { if (v.paused) v.play().catch(() => {}); }
+        else if (!v.paused) v.pause();
+      });
+    };
+    const id = setInterval(check, 150);
+    check();
+    return () => clearInterval(id);
+  }, []);
   return (
     <section className="hero">
       <h1 className={`hero-name wrap i-${phase}`}>
@@ -342,12 +370,12 @@ function Hero({ phase, pageIn }) {
           <span>{CONFIG.hero.line2}</span>
         </div>
       </h1>
-      {/* smooth GPU CSS auto-scroll; light video files keep the weight down */}
-      <div className={`marquee ${pageIn ? "m-in" : "m-out"}`} aria-hidden="true">
+      {/* smooth GPU CSS auto-scroll; light files + play-only-visible keep it fast */}
+      <div className={`marquee ${pageIn ? "m-in" : "m-out"}`} ref={marqueeRef} aria-hidden="true">
         <div className="marquee-track">
           {tiles.map((m, i) => (
             <div className="tile" key={i}>
-              <Media src={m} label={`Reel ${(i % CONFIG.hero.media.length) + 1}`} />
+              <Media src={m} label={`Reel ${(i % CONFIG.hero.media.length) + 1}`} marquee />
             </div>
           ))}
         </div>
@@ -394,7 +422,7 @@ function WorkList({ openCase }) {
     <section className="wrap worklist" onMouseMove={isTouch ? undefined : onMove}>
       <div className="sec-head rv">
         <div className="sec-title">Featured Work</div>
-        <div className="sec-hint">{isTouch ? "(Tap to preview, tap again to view)" : "(Click to view)"}</div>
+        <div className="sec-hint">{isTouch ? "(Tap to view)" : "(Click to view)"}</div>
       </div>
       {CONFIG.work.map((w) => (
         <div key={w.id} className="rv">
@@ -402,23 +430,10 @@ function WorkList({ openCase }) {
             className={`work-item ${active === w.id ? "active" : ""}`}
             onMouseEnter={() => !isTouch && setActive(w.id)}
             onMouseLeave={() => !isTouch && setActive(null)}
-            onClick={() => {
-              if (isTouch && active !== w.id) setActive(w.id);
-              else openCase(w.id);
-            }}
+            onClick={() => openCase(w.id)}
           >
             {w.name}
           </button>
-          {isTouch && active === w.id && (
-            <>
-              <div className="work-preview-mobile">
-                <Media src={w.media[0]} label={w.name} />
-              </div>
-              <button className="work-open" onClick={() => openCase(w.id)}>
-                View project →
-              </button>
-            </>
-          )}
         </div>
       ))}
       {!isTouch && (
